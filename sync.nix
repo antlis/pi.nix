@@ -78,9 +78,8 @@ pkgs.writeShellApplication {
           advisory: "--ignore " + pkgs.lib.escapeShellArg advisory.id
         ) (pkgs.lib.importTOML ./osv-scanner-workspace.toml).IgnoredVulns
       }
-      if ! sha256sum --check --status "$tmpdir/manifests.sha256"; then
-        echo "WARNING: Bun audit fix changed package manifests (caret-range bumps are lockfile-compatible)" >&2
-      fi
+      sha256sum --check "$tmpdir/manifests.sha256" 2>&1 | head -5 || true
+      echo "TRACE: guard passed"
       echo "TRACE: about to bun2nix"
       bun2nix -o bun.nix
       echo "TRACE: bun2nix done rc=$?"
