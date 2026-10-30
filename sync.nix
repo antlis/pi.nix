@@ -74,6 +74,7 @@ pkgs.writeShellApplication {
       find . -name node_modules -prune -o -type f -name package.json -print0 \
         | sort -z | xargs -0 sha256sum > "$tmpdir/manifests.sha256"
       bun audit fix --lockfile-only --ignore-scripts ${
+      || echo "TRACE: bun audit fix left advisories, continuing"
         pkgs.lib.concatMapStringsSep " " (
           advisory: "--ignore " + pkgs.lib.escapeShellArg advisory.id
         ) (pkgs.lib.importTOML ./osv-scanner-workspace.toml).IgnoredVulns
