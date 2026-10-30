@@ -81,7 +81,9 @@ pkgs.writeShellApplication {
       if ! sha256sum --check --status "$tmpdir/manifests.sha256"; then
         echo "WARNING: Bun audit fix changed package manifests (caret-range bumps are lockfile-compatible)" >&2
       fi
+      echo "TRACE: about to bun2nix"
       bun2nix -o bun.nix
+      echo "TRACE: bun2nix done rc=$?"
       popd >/dev/null
 
       sed -i '/^  fetchurl,$/a\  workspaceRoot ? throw "coding-agent/bun.nix requires workspaceRoot (the upstream pi source root)",' "$tmpdir/bun.nix"
